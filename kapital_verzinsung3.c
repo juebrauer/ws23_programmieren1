@@ -22,16 +22,19 @@ int main() {
   zinssatz /= 100;
 
   // Kapital nach jedem Jahr berechnen
-  while (startkapital < zielkapital) {
+  float kapital = startkapital;
+  while (kapital < zielkapital) {
     //jahre++;
     jahre = jahre + 1;
-    startkapital = startkapital * (1 + zinssatz);
+    //kapital = kapital * (1 + zinssatz);
+    kapital = kapital + kapital * zinssatz;
   }
+  printf("Zielkapital erreicht nach %d Jahren.\n", jahre); 
 
   // Ausgabe
-  printf("Zielkapital erreicht nach %d Jahren.\n", jahre);  
+  kapital = startkapital;
   for (int i = 0; i <= jahre; i++) {
-    printf("Kapital nach %d Jahren: %.2f\n", i, startkapital * pow(1 + zinssatz, i));
+    printf("Kapital nach %d Jahren: %.2f\n", i, kapital * pow(1 + zinssatz, i));
   }
 
   // Start: startkapital
