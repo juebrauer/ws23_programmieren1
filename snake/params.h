@@ -1,6 +1,10 @@
 #define HOEHE 30
 #define BREITE 50
 #define ANZ_FUTTERSTUECKE 5
+#define ANZ_VERTIKALE_WAENDE 10
+#define ANZ_HORIZONTALE_WAENDE 5
+#define ANZ_DIAGONALE_WAENDE 5
+#define WAND_LAENGE 6
 
 #define FELD_LEER '.'
 #define FELD_WAND '#'
