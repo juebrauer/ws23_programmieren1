@@ -17,6 +17,12 @@ int sy = HOEHE/2;
 int slx = 1;
 int sly = 0;
 
+// Schlangenlänge (:= Länge der Schlange bis auf den Kopf)
+int slen = START_SCHLANGEN_LAENGE;
+
+int sstueckx[MAX_SCHLAENGE_LAENGE];
+int sstuecky[MAX_SCHLAENGE_LAENGE];
+
 
 
 void spielfeld_waende_einfuegen() {
@@ -71,6 +77,14 @@ void spielfeld_hindernisswaende_einfuegen(int anz_waende, int lx, int ly)
     }
 }
 
+void spielfeld_startbereich_freimachen()
+{
+    int S = START_BEREICH_SEITENLAENGE;
+    for (int oy=-S/2; oy<=S/2; oy++)
+        for (int ox=-S/2; ox<=S/2; ox++)
+            spielfeld[sy+oy][sx+ox] = FELD_LEER;
+}
+
 
 void spielfeld_initialisieren() {
     
@@ -79,6 +93,7 @@ void spielfeld_initialisieren() {
     spielfeld_hindernisswaende_einfuegen(ANZ_HORIZONTALE_WAENDE, 1,0);
     spielfeld_hindernisswaende_einfuegen(ANZ_DIAGONALE_WAENDE, -1,1);
     //spielfeld_hindernisswaende_einfuegen(ANZ_DIAGONALE_WAENDE,  1,1);
+    spielfeld_startbereich_freimachen();
     spielfeld_futter_einfuegen();
 }
 
@@ -91,29 +106,82 @@ void spielfeld_ausgeben() {
             printf("%c", spielfeld[y][x]);
         }    
         printf("\n");
+    }    
+}
+
+
+void setze_schlange_ins_spielfeld()
+{
+    // Setze Schlangenkopf ins Spielfeld
+    spielfeld[sy][sx] = FELD_SCHLANGE_KOPF;
+
+    for (int stueck=0; stueck<slen; stueck++)
+    {
+        int kx = sstueckx[stueck];
+        int ky = sstuecky[stueck];
+        spielfeld[ky][kx] = FELD_SCHLANGEN_STUECK;
     }
 }
 
+void bewege_schlange_im_spielfeld(int old_sx, int old_sy)
+{
+    // Lösche aus dem Spielfeld das letzte Schlangenstückchen
+    int kx = sstueckx[slen-1];
+    int ky = sstuecky[slen-1];
+    spielfeld[ky][kx] = ' ';
+        
+
+    // Alle weiteren Schlangenstücke rücken eins auf
+    for (int stueck=slen-1; stueck>=1; stueck--)
+    {
+        sstueckx[stueck] = sstueckx[stueck-1];
+        sstuecky[stueck] = sstuecky[stueck-1];
+    }
+
+    // Setze das 1. Stück auf die alte Schlangenkopfposition
+    sstueckx[0] = old_sx;
+    sstuecky[0] = old_sy;
+
+    // Trage die Schlange ins Spielfeld ein
+    setze_schlange_ins_spielfeld();
+}
+
+
 int main() {
 
-    srand(time(NULL));
+    //srand(time(NULL));
+    srand(42);
+
+    // Die Startposition der Schlange ist über (sx,sy)
+    // bereits vorbereitet und die Laufrichtung über (slx, sly).
+    // Setze nun die Anfangsschlangenstücke entsprechend:
+    for (int stueck=0; stueck<START_SCHLANGEN_LAENGE; stueck++)
+    {
+        sstueckx[stueck] = sx-stueck-1;
+        sstuecky[stueck] = sy;
+    }
 
     spielfeld_initialisieren();
 
-    // Setze Schlange an Startposition im Spielfeld
-    spielfeld[sy][sx] = FELD_SCHLANGE;
+    setze_schlange_ins_spielfeld();
+    
 
     // Spielschleife
     int counter = 0;
     while (1) {
         clear();
         spielfeld_ausgeben();
+
         counter++;
-        printf("%d\n", counter);
+        printf("Länge: %d, Update: %d\n", slen, counter);      
 
-        // Schlange von alter Position löschen
-        spielfeld[sy][sx] = FELD_LEER;
+        printf("sx=%d, sy=%d\n", sx,sy);
+        for (int stueck=0; stueck<slen; stueck++)
+        {
+            printf("stueck #%d: x=%d, y=%d\n", stueck, sstueckx[stueck], sstuecky[stueck]);
+        }
 
+        
         // Hat der Benutzer eine Taste gedrückt?
         if (kbhit()) {
 
@@ -134,28 +202,38 @@ int main() {
             }                
             if (taste=='l') {
                 slx = 1;
-                sly = 0;
-            }           
+                sly = 0;                
+            }
+            if (taste=='q')
+                break;
         }
+
         // Schlange läuft automatisch in aktuelle Laufrichtung weiter
+        int old_sx = sx;
+        int old_sy = sy;
         sx += slx;
         sy += sly;
-
-        // Schlange kann nicht aus dem Spielfeld laufen!
-        if (sx==0)
-            sx = 1;
-        if (sx==BREITE-1)
-            sx = BREITE-2;
-        if (sy==0)
-            sy = 1;
-        if (sy==HOEHE-1)
-            sy = HOEHE-2;        
         
-        // Setze Schlange an neue Stelle im Spielfeld
-        spielfeld[sy][sx] = FELD_SCHLANGE;
+        // Ist die Schlange in eine Wand gelaufen?
+        if (spielfeld[sy][sx] == FELD_WAND)
+        {
+            printf("Ups! Du hast die Schlange in die Wand gefahren!\n");
+            break;
+        }
 
+        // Ist die Schlange in ein Futterstück gelaufen?
+        if (spielfeld[sy][sx] == FELD_FUTTER)
+        {
+            slen++;
+        }
+
+        // Bewege die Schlange im Spielfeld
+        bewege_schlange_im_spielfeld(old_sx, old_sy);
+        
         mssleep(100);
     }
+
+    printf("Spiel beendet!\n");
 
     return 0;
 }
