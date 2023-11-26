@@ -93,3 +93,11 @@ int mssleep(long tms)
     */
     return ret;
 }
+
+void substring(char *dest, const char *src, int start, int end) {
+    // Kopieren des Teils des Strings in dest
+    strncpy(dest, src + start, end - start + 1);
+
+    // Hinzufügen des Nullterminators
+    dest[end - start + 1] = '\0';
+}

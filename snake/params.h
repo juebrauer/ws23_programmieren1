@@ -17,3 +17,5 @@
 #define FELD_SCHLANGE_KOPF '@'
 #define FELD_SCHLANGEN_STUECK '+'
 
+#define SPRUCH1 "Ich hoffe es hat geschmeckt! Das war dein x-tes Futterstück!"
+

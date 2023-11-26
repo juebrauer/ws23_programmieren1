@@ -1,6 +1,7 @@
 #include <stdio.h>  // printf()
 #include <stdlib.h> // rand()
 #include <time.h>   // time()
+#include <string.h> // strlen()
 
 #include "params.h" // Spielparameter
 #include "snake_hilfsfunktionen.h"
@@ -22,6 +23,9 @@ int slen = START_SCHLANGEN_LAENGE;
 
 int sstueckx[MAX_SCHLAENGE_LAENGE];
 int sstuecky[MAX_SCHLAENGE_LAENGE];
+
+int start_spruch = 0;
+int end_spruch = 0;
 
 
 
@@ -99,6 +103,24 @@ void spielfeld_initialisieren() {
 
 
 void spielfeld_ausgeben() {
+
+    if (end_spruch<strlen(SPRUCH1))
+        end_spruch++;
+    
+    if (end_spruch>=BREITE)
+        start_spruch++;
+
+    if (start_spruch < end_spruch)
+    {        
+        char teilspruch[100];
+        substring(teilspruch, SPRUCH1, start_spruch, end_spruch);
+
+        printf("%s\n", teilspruch);
+    }
+    else
+        printf("\n");
+
+
     for (int y=0; y<HOEHE; y++)
     {
         for (int x=0; x<BREITE; x++)
@@ -174,6 +196,7 @@ int main() {
 
         counter++;
         printf("Länge: %d, Update: %d\n", slen, counter);      
+        printf("start_spruch=%d, end_spruch=%d\n", start_spruch, end_spruch);
 
         printf("sx=%d, sy=%d\n", sx,sy);
         for (int stueck=0; stueck<slen; stueck++)
@@ -181,6 +204,7 @@ int main() {
             printf("stueck #%d: x=%d, y=%d\n", stueck, sstueckx[stueck], sstuecky[stueck]);
         }
 
+        
         
         // Hat der Benutzer eine Taste gedrückt?
         if (kbhit()) {
