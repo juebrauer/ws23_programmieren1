@@ -115,6 +115,7 @@ class LoggerHTML : public Logger
             
         }
 
+        
         void logmsg(string txt)
         {
             string currentDateTime = getCurrentDateTime();
@@ -144,23 +145,14 @@ class LoggerHTML : public Logger
 
 int main()
 {
-    cout << "Hello world!" << endl;
-
-    vector<int> v;
-    v.push_back( 100 );
-    for (int i=0; i<10; i++)
-        v.push_back( 105 );
-    v.push_back( 95 );
-    
-    for (int i=0; i<v.size(); i++)
-        cout << v[i] << " ";  
-
+  
+   
     /*
     Logger* p = new Logger("L1");
     p->logmsg("Hallo! Ich bin die Ausgabe aus der Basisklasse.");
     */
 
-    /*
+    
 
     //LoggerFile* ptr_l1 = new LoggerFile("L1", "logfile.txt");
     Logger* ptr_l1 = new LoggerHTML("L1",
@@ -174,7 +166,7 @@ int main()
     }
 
     delete ptr_l1;
-    */
+    
 
     //l1->name = "Ätschibätch! Ich gebe dir einen anderen Name";
 
