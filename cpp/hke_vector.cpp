@@ -1,9 +1,11 @@
 #include <iostream>
+#include <iomanip>
 
+template<class T>
 class hke_vector
 {
     private:
-        int* ptr_data;
+        T* ptr_data;
         int counter;
 
     public:
@@ -20,11 +22,11 @@ class hke_vector
 
         }
 
-        void push_back(int number) {
+        void push_back(T el) {
             // Gibt es das Array schon?
             if (nullptr==ptr_data) {
                 // Das Array gibt es noch nicht! Lege es an! ...
-                ptr_data = (int*) malloc(1 * sizeof(int));
+                ptr_data = (T*) malloc(1 * sizeof(T));
 
                 // ... und merke dir, dass wir ein 1. Element haben        
                 counter = 1;
@@ -34,11 +36,11 @@ class hke_vector
                 counter++;
 
                 // Mache das Array um ein Element größer
-                ptr_data = (int*) realloc(ptr_data, counter * sizeof(int));               
+                ptr_data = (T*) realloc(ptr_data, counter * sizeof(T));               
             }
 
             // Speichere die nächste Zahl
-            ptr_data[counter-1] = number;
+            ptr_data[counter-1] = el;
         }
 
         void print() {
@@ -50,7 +52,7 @@ class hke_vector
             std::cout << "\n";
         }
 
-        int at(int index)
+        T at(int index)
         {
             if ((index>=0) && (index<counter))
                 return ptr_data[index];
@@ -72,36 +74,34 @@ class hke_vector
 
                 // 2. Das Array um ein Element kleiner machen
                 counter--;
-                ptr_data = (int*) realloc(ptr_data, counter * sizeof(int)); 
+                ptr_data = (T*) realloc(ptr_data, counter * sizeof(T)); 
             }
         }        
     
 };
 
-hke_vector* v;
+
 
 int main()
 {    
-    v = new hke_vector();
-    v->push_back(12);
-    v->push_back(14);
-    v->push_back(-7);
-    v->push_back(37);
-    v->push_back(39);
-    v->push_back(42);
-
-    //  0  1  2  3  4 
-    // 12 14 37 39 42 
-
-    v->print();
-
-    std::cout << "Element bei Index 3: " << v->at(3) << "\n";
-
-    v->erase(5);
-
-    v->print();
-
-    delete v;
+    hke_vector<float> v;
+    v.push_back(12.4f);
+    v.push_back(14.434f);
+    v.push_back(-7.4f);
+    v.push_back(37.30123456f);
+    v.push_back(39.3f);
+    v.push_back(42.84f);
 
 
+    v.print();
+
+    std::cout << std::fixed << std::setprecision(8) <<
+                 "Element bei Index 3: " << v.at(3) << "\n";
+
+    std::cout << std::fixed << std::setprecision(2);
+
+    v.erase(3);
+
+    v.print();
+    
 }
